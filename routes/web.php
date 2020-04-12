@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/{url?}', function () {
     return view('app');
-});
+}) -> where('', 'menu');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
