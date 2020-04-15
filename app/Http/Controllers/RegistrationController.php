@@ -2,26 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\RegistrationRequest;
+use App\Traits\RegisterUser;
 
 class RegistrationController extends Controller
 {
+    use RegisterUser;
+
     public function show()
     {
         return view('register');
     }
 
-    public function register(Request $request)
+    public function register(RegistrationRequest $requestFields)
     {
-        $validator = $request->validate([
-            'name' => 'required|min:3',
-            'phone' => 'required',
-            'password' => 'required|min:6'
-        ]);
-
-        \App\User::create($validator);
+        $this->registerUser($requestFields);
 
         return redirect('/login');
     }

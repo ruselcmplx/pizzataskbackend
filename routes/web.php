@@ -24,5 +24,5 @@ Route::post('/login', 'LoginController@authenticate');
 Route::post('/register', 'RegistrationController@register');
 
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', 'LoginController@logout');
+    Route::post('/logout', 'LoginController@logout')->name('logout');
 });

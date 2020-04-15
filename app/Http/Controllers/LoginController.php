@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+
+use App\Http\Requests\LoginRequest;
+use Error;
 
 class LoginController extends Controller
 {
@@ -13,16 +15,20 @@ class LoginController extends Controller
         return view('login');
     }
 
-    public function authenticate(Request $request)
+    public function authenticate(LoginRequest $requestFields)
     {
-        $validator = $request->validate([
-            'phone'     => 'required',
-            'password'  => 'required|min:6'
-        ]);
+        $attributes = $requestFields->only(['phone', 'password']);
 
-        if (Auth::attempt($validator)) {
-            return redirect()->route('/');
+        $phone = $requestFields->get('phone');
+
+        if (\App\User::where('phone', $phone)->exists()) {
+            if (Auth::attempt($attributes)) {
+                return redirect()->route('home');
+            }
+        } else {
+            return redirect()->route('login')->withErrors(['phone' => "User don't exists"]);
         }
+
     }
 
     public function logout()

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash as Hash;
 class User extends Authenticatable
 {
     use Notifiable;
-    use Hash;
 
     /**
      * The attributes that are mass assignable.
