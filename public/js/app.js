@@ -69979,6 +69979,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Menu; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _MenuItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MenuItem */ "./resources/js/components/MenuItem.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -70003,15 +70004,79 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+var menu_data = [{
+  "id": "ead23179-f317-4a0e-9d2a-a9b16d9f6000",
+  "index": 0,
+  "img": "/img/margherita.png",
+  "price": 18.69,
+  "name": "Margherita",
+  "toppings": "Tomato sauce, mozzarella, and oregano"
+}, {
+  "id": "4548811d-2532-44b7-aa72-86d0dffe09a1",
+  "index": 1,
+  "img": "/img/marinara.png",
+  "price": 18.89,
+  "name": "Marinara",
+  "toppings": "Tomato sauce, garlic and basil"
+}, {
+  "id": "5cd74b15-4caf-4ee9-9bbd-a7999914b171",
+  "index": 2,
+  "img": "/img/carbonara.png",
+  "price": 19.99,
+  "name": "Carbonara",
+  "toppings": "Tomato sauce, mozzarella, parmesan, eggs, and bacon"
+}, {
+  "id": "8410945f-4041-4858-ba90-9c4d138406e6",
+  "index": 3,
+  "img": "/img/napoli.png",
+  "price": 18.79,
+  "name": "Napoli",
+  "toppings": "Tomato sauce, mozzarella, oregano, anchovies"
+}, {
+  "id": "1324ef75-b8d3-49f2-8566-49d3428375d4",
+  "index": 4,
+  "img": "/img/americana.png",
+  "price": 19.99,
+  "name": "Americana",
+  "toppings": "Tomato sauce, mozzarella, sausage and french fries"
+}, {
+  "id": "144519c9-fa71-4eb4-879c-506ac67f36c3",
+  "index": 5,
+  "img": "/img/diavola.png",
+  "price": 19.99,
+  "name": "Diavola",
+  "toppings": "Tomato sauce, mozzarella, spicy salami, and chilli pepper"
+}, {
+  "id": "c9767ccd-4dda-4c62-a2da-3a749b74b61b",
+  "index": 6,
+  "img": "/img/vegetariana.png",
+  "price": 21.79,
+  "name": "Vegetariana",
+  "toppings": "Tomato sauce, mozzarella and a various vegetable"
+}, {
+  "id": "c357d21d-1b42-4083-9f87-49a14393a4a7",
+  "index": 7,
+  "img": "/img/bismarck.png",
+  "price": 18.98,
+  "name": "Bismarck",
+  "toppings": "Tomato sauce, mozzarella, ham, and fried egg"
+}];
+
 var Menu = /*#__PURE__*/function (_React$Component) {
   _inherits(Menu, _React$Component);
 
   var _super = _createSuper(Menu);
 
-  function Menu() {
+  function Menu(props) {
+    var _this;
+
     _classCallCheck(this, Menu);
 
-    return _super.apply(this, arguments);
+    _this = _super.call(this, props);
+    _this.state = {
+      menu_data: menu_data
+    };
+    return _this;
   }
 
   _createClass(Menu, [{
@@ -70029,11 +70094,147 @@ var Menu = /*#__PURE__*/function (_React$Component) {
         className: "card-header"
       }, "Menu"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-body"
-      }, "This is the menu.")))));
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, this.state.menu_data.map(function (item) {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_MenuItem__WEBPACK_IMPORTED_MODULE_1__["default"], {
+          key: item.index,
+          data: item
+        });
+      }))))))));
     }
   }]);
 
   return Menu;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/MenuItem.js":
+/*!*********************************************!*\
+  !*** ./resources/js/components/MenuItem.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return MenuItem; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+var MenuItem = /*#__PURE__*/function (_React$Component) {
+  _inherits(MenuItem, _React$Component);
+
+  var _super = _createSuper(MenuItem);
+
+  function MenuItem(props) {
+    var _this;
+
+    _classCallCheck(this, MenuItem);
+
+    _this = _super.call(this, props);
+    _this.state = {
+      value: 0
+    };
+    _this.handleChange = _this.handleChange.bind(_assertThisInitialized(_this));
+    _this.handleAdd = _this.handleAdd.bind(_assertThisInitialized(_this));
+    _this.handleRemove = _this.handleRemove.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(MenuItem, [{
+    key: "handleChange",
+    value: function handleChange(event) {
+      this.setState({
+        value: event.target.value
+      });
+    }
+  }, {
+    key: "handleAdd",
+    value: function handleAdd() {
+      this.setState({
+        value: this.state.value + 1
+      });
+    }
+  }, {
+    key: "handleRemove",
+    value: function handleRemove() {
+      this.setState({
+        value: this.state.value ? this.state.value - 1 : 0
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var data = this.props.data;
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container col-sm-3 mb-3"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card h-100"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        src: data.img,
+        className: "card-img-top"
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-body d-flex flex-column justify-content-between"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
+        className: "card-title"
+      }, data.name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "card-subtitle"
+      }, data.price), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", {
+        className: "card-text"
+      }, "Toppings: ", data.toppings), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "input-group mb-3"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "input-group-prepend"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-secondary",
+        onClick: this.handleRemove
+      }, "-")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        className: "form-control",
+        placeholder: "0",
+        value: this.state.value,
+        onChange: this.handleChange
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "input-group-append"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-secondary",
+        onClick: this.handleAdd
+      }, "+"))))));
+    }
+  }]);
+
+  return MenuItem;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component);
 
 
@@ -70065,7 +70266,7 @@ var root = document.getElementById('root');
 
 if (root) {
   react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["BrowserRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-    className: "row justify-content-center"
+    className: "justify-content-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Switch"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
     exact: true,
     path: "/menu",
