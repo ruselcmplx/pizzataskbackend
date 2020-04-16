@@ -69927,10 +69927,10 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
-/***/ "./resources/js/components/App.js":
-/*!****************************************!*\
-  !*** ./resources/js/components/App.js ***!
-  \****************************************/
+/***/ "./resources/js/components/Main.js":
+/*!*****************************************!*\
+  !*** ./resources/js/components/Main.js ***!
+  \*****************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -69940,10 +69940,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 
 
 
-function App() {
+
+function Main() {
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "container"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -69956,13 +69958,15 @@ function App() {
     className: "card-header"
   }, "Home Page"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "card-body"
-  }, "Order pizza on the menu.")))));
+  }, "Order pizza on the ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
+    href: "/menu"
+  }, "menu"), ".")))));
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (App);
+/* harmony default export */ __webpack_exports__["default"] = (Main);
 
 if (document.getElementById('root')) {
-  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, null), document.getElementById('root'));
+  react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Main, null), document.getElementById('root'));
 }
 
 /***/ }),
@@ -70074,14 +70078,82 @@ var Menu = /*#__PURE__*/function (_React$Component) {
 
     _this = _super.call(this, props);
     _this.state = {
-      menu_data: menu_data
+      menu_data: menu_data,
+      orderPrice: 0,
+      order: {},
+      eur_to_usd_multiplier: 1
     };
+    _this.handleOrderChange = _this.handleOrderChange.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(Menu, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      fetch('https://api.exchangeratesapi.io/latest?base=USD').then(function (res) {
+        res.json().then(function (data) {
+          _this2.setState({
+            eur_to_usd_multiplier: data.rates.EUR
+          });
+        });
+      });
+    }
+  }, {
+    key: "handleOrderChange",
+    value: function handleOrderChange(amount, item) {
+      var currentOrder = this.state.order;
+      var itemId = item.id;
+      var newPrice = 0;
+
+      if (currentOrder.hasOwnProperty(itemId)) {
+        if (amount) {
+          currentOrder[itemId] = {
+            name: item.name,
+            total_price: +(item.price * amount).toFixed(2),
+            amount: amount
+          };
+        } else {
+          delete currentOrder[itemId];
+        }
+      } else if (amount) {
+        currentOrder[itemId] = {
+          name: item.name,
+          total_price: +(item.price * amount).toFixed(2),
+          amount: amount
+        };
+      }
+
+      for (var id in currentOrder) {
+        if (currentOrder.hasOwnProperty(id)) {
+          var orderItem = currentOrder[id];
+          newPrice += orderItem.total_price;
+        }
+      }
+
+      var formattedPrice = +newPrice.toFixed(2);
+      this.setState({
+        // +delievery
+        orderPrice: Math.fround(formattedPrice + 123).toFixed(2),
+        order: currentOrder
+      });
+      $('#order_price').toast(formattedPrice ? 'show' : 'dispose');
+    }
+  }, {
     key: "render",
     value: function render() {
+      var _this3 = this;
+
+      var order = this.state.order;
+      var orderItems = [];
+
+      for (var id in order) {
+        if (order.hasOwnProperty(id)) {
+          orderItems.push(order[id]);
+        }
+      }
+
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -70097,13 +70169,31 @@ var Menu = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "row"
+        className: "row mb-5"
       }, this.state.menu_data.map(function (item) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_MenuItem__WEBPACK_IMPORTED_MODULE_1__["default"], {
           key: item.index,
-          data: item
+          data: item,
+          handleOrderChange: _this3.handleOrderChange
         });
-      }))))))));
+      }))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        id: "order_price",
+        className: "order_price toast fixed-bottom ml-3 mb-3",
+        role: "alert",
+        "data-autohide": "false"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "toast-header"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", {
+        className: "mr-auto"
+      }, "Your order")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "toast-body"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+        className: "list-unstyled"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, orderItems.map(function (item, index) {
+        return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+          key: index
+        }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, item.name, ":"), " ", item.amount, " pcs.");
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, "Delievery costs: ", '123$'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Total price: ", this.state.orderPrice + '$', ",  ", +(this.state.orderPrice * this.state.eur_to_usd_multiplier).toFixed(2) + '€'))))));
     }
   }]);
 
@@ -70173,22 +70263,36 @@ var MenuItem = /*#__PURE__*/function (_React$Component) {
   _createClass(MenuItem, [{
     key: "handleChange",
     value: function handleChange(event) {
+      var value = event.target.value;
       this.setState({
-        value: event.target.value
+        value: value
       });
+      this.props.handleOrderChange(value, this.props.data);
     }
   }, {
     key: "handleAdd",
     value: function handleAdd() {
+      var value = this.state.value + 1;
       this.setState({
-        value: this.state.value + 1
+        value: value
       });
+      this.props.handleOrderChange(value, this.props.data);
     }
   }, {
     key: "handleRemove",
     value: function handleRemove() {
+      if (!this.state.value) {
+        return;
+      }
+
+      var value = this.state.value - 1;
+
+      if (this.state.value) {
+        this.props.handleOrderChange(value, this.props.data);
+      }
+
       this.setState({
-        value: this.state.value ? this.state.value - 1 : 0
+        value: value
       });
     }
   }, {
@@ -70196,12 +70300,12 @@ var MenuItem = /*#__PURE__*/function (_React$Component) {
     value: function render() {
       var data = this.props.data;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "container col-sm-3 mb-3"
+        className: "container col-sm-4 mb-3"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card h-100"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
         src: data.img,
-        className: "card-img-top"
+        className: "card-img-top bg-light"
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "card-body d-flex flex-column justify-content-between"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
@@ -70255,7 +70359,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var _components_App__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/App */ "./resources/js/components/App.js");
+/* harmony import */ var _components_Main__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Main */ "./resources/js/components/Main.js");
 /* harmony import */ var _components_Menu__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Menu */ "./resources/js/components/Menu.js");
 
 
@@ -70265,6 +70369,10 @@ __webpack_require__.r(__webpack_exports__);
 var root = document.getElementById('root');
 
 if (root) {
+  var onClickMenuLink = function onClickMenuLink() {
+    return;
+  };
+
   react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["BrowserRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "justify-content-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Switch"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
@@ -70272,7 +70380,7 @@ if (root) {
     path: "/menu",
     component: _components_Menu__WEBPACK_IMPORTED_MODULE_4__["default"]
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
-    component: _components_App__WEBPACK_IMPORTED_MODULE_3__["default"]
+    component: _components_Main__WEBPACK_IMPORTED_MODULE_3__["default"]
   })))), root);
 }
 
