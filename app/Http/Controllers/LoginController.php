@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 use App\Http\Requests\LoginRequest;
-use Error;
 
 class LoginController extends Controller
 {

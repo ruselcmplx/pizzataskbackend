@@ -69940,8 +69940,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-
 
 
 
@@ -69984,6 +69982,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _MenuItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MenuItem */ "./resources/js/components/MenuItem.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -70005,6 +70005,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 
 
 
@@ -70079,11 +70080,15 @@ var Menu = /*#__PURE__*/function (_React$Component) {
     _this = _super.call(this, props);
     _this.state = {
       menu_data: menu_data,
-      orderPrice: 0,
+      order_price: 0,
       order: {},
-      eur_to_usd_multiplier: 1
+      eur_to_usd_multiplier: 1,
+      delievery_costs: 0,
+      phone: ''
     };
     _this.handleOrderChange = _this.handleOrderChange.bind(_assertThisInitialized(_this));
+    _this.handleOrderButtonClick = _this.handleOrderButtonClick.bind(_assertThisInitialized(_this));
+    _this.handlePhoneChange = _this.handlePhoneChange.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -70106,12 +70111,13 @@ var Menu = /*#__PURE__*/function (_React$Component) {
       var currentOrder = this.state.order;
       var itemId = item.id;
       var newPrice = 0;
+      var totalAmount = 0;
 
       if (currentOrder.hasOwnProperty(itemId)) {
         if (amount) {
           currentOrder[itemId] = {
             name: item.name,
-            total_price: +(item.price * amount).toFixed(2),
+            totalPrice: +(item.price * amount).toFixed(2),
             amount: amount
           };
         } else {
@@ -70120,7 +70126,7 @@ var Menu = /*#__PURE__*/function (_React$Component) {
       } else if (amount) {
         currentOrder[itemId] = {
           name: item.name,
-          total_price: +(item.price * amount).toFixed(2),
+          totalPrice: +(item.price * amount).toFixed(2),
           amount: amount
         };
       }
@@ -70128,22 +70134,86 @@ var Menu = /*#__PURE__*/function (_React$Component) {
       for (var id in currentOrder) {
         if (currentOrder.hasOwnProperty(id)) {
           var orderItem = currentOrder[id];
-          newPrice += orderItem.total_price;
+          newPrice += orderItem.totalPrice;
+          totalAmount += orderItem.amount;
         }
       }
 
       var formattedPrice = +newPrice.toFixed(2);
+      var delievery_costs = 19 * Math.ceil(totalAmount / 10);
       this.setState({
         // +delievery
-        orderPrice: Math.fround(formattedPrice + 123).toFixed(2),
-        order: currentOrder
+        order_price: Math.fround(formattedPrice + delievery_costs).toFixed(2),
+        order: currentOrder,
+        delievery_costs: delievery_costs
       });
       $('#order_price').toast(formattedPrice ? 'show' : 'dispose');
     }
   }, {
+    key: "handleOrderButtonClick",
+    value: function handleOrderButtonClick() {
+      var _this3 = this;
+
+      var is_auth = window.Laravel.auth.user;
+      var request_data = {
+        phone: '',
+        order: JSON.stringify(this.state.order)
+      };
+
+      if (is_auth) {
+        // proceed
+        this.handleRequest(request_data);
+      } else {
+        var modal = new Promise(function (resolve, reject) {
+          $('#phoneModalDialog').modal('show');
+          $('#phoneModalDialog .btn-proceed').click(function () {
+            var phone = _this3.state.phone;
+
+            if (phone && phone.match(/\d+/)) {
+              resolve(_this3.state.phone);
+            } else {
+              $('#phoneModalDialog .phone').addClass('border-danger');
+              $('#phoneModalDialog .error').append('<div className="error-text">Please enter valid phone.</div>');
+              reject();
+            }
+          });
+        }).then(function (phone) {
+          // proceed with phone
+          request_data.phone = phone;
+
+          _this3.handleRequest(request_data);
+
+          $('#phoneModalDialog').modal('hide');
+        })["catch"](function () {
+          return false;
+        });
+      }
+    }
+  }, {
+    key: "handleRequest",
+    value: function handleRequest(data) {
+      var req = JSON.stringify(data);
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/order', req).then(function (res) {
+        if (res && res.status === 200 && res.data) {
+          window.location.href = "/order";
+        }
+      })["catch"](function () {
+        return;
+      });
+    }
+  }, {
+    key: "handlePhoneChange",
+    value: function handlePhoneChange(event) {
+      $('#phoneModalDialog .phone').removeClass('border-danger');
+      $('#phoneModalDialog .error').empty();
+      this.setState({
+        phone: event.target.value
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var order = this.state.order;
       var orderItems = [];
@@ -70174,7 +70244,7 @@ var Menu = /*#__PURE__*/function (_React$Component) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_MenuItem__WEBPACK_IMPORTED_MODULE_1__["default"], {
           key: item.index,
           data: item,
-          handleOrderChange: _this3.handleOrderChange
+          handleOrderChange: _this4.handleOrderChange
         });
       }))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         id: "order_price",
@@ -70193,7 +70263,37 @@ var Menu = /*#__PURE__*/function (_React$Component) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
           key: index
         }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, item.name, ":"), " ", item.amount, " pcs.");
-      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, "Delievery costs: ", '123$'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Total price: ", this.state.orderPrice + '$', ",  ", +(this.state.orderPrice * this.state.eur_to_usd_multiplier).toFixed(2) + '€'))))));
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, "Delievery costs: ", this.state.delievery_costs + '$'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+        className: "mt-2"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Total price:\xA0", this.state.order_price + '$', ",\xA0", +(this.state.order_price * this.state.eur_to_usd_multiplier).toFixed(2) + '€')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-success mt-3",
+        onClick: this.handleOrderButtonClick
+      }, "Proceed to order")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal phone_dialog",
+        id: "phoneModalDialog",
+        role: "dialog"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-dialog"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-content"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-header"
+      }, "Enter your phone:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-body"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "tel",
+        className: "phone form-control",
+        required: true,
+        value: this.state.phone,
+        onChange: this.handlePhoneChange
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "error text-danger"
+      })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-footer"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "btn btn-primary btn-proceed"
+      }, "Proceed"))))));
     }
   }]);
 
@@ -70369,10 +70469,6 @@ __webpack_require__.r(__webpack_exports__);
 var root = document.getElementById('root');
 
 if (root) {
-  var onClickMenuLink = function onClickMenuLink() {
-    return;
-  };
-
   react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["BrowserRouter"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "justify-content-center"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Switch"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
