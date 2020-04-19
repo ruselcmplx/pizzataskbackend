@@ -8,6 +8,7 @@ How to install:
 ```bash
 git clone https://github.com/ruselcmplx/pizzataskbackend.git
 cd pizzataskbackend
+# install composer if you don't have it
 composer install
 php artisan key:generate
 ```
