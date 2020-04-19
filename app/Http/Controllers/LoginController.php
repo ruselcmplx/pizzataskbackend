@@ -34,6 +34,6 @@ class LoginController extends Controller
     {
         Session::flush();
         Auth::logout();
-        return back();
+        return redirect()->route('home');
     }
 }
