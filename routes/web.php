@@ -24,6 +24,7 @@ Route::post('/register', 'RegistrationController@register');
 
 Route::get('/order', 'OrderController@getorder')->name('order');
 Route::post('/order', 'OrderController@createorder');
+Route::post('/payment', 'OrderController@payment');
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', 'LoginController@logout')->name('logout');

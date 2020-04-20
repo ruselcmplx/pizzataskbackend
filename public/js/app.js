@@ -70528,11 +70528,15 @@ var Order = /*#__PURE__*/function (_React$Component) {
 
     _this = _super.call(this, props);
     _this.state = {
+      phone: user_phone,
+      address: '',
+      post_code: '',
       eur_to_usd_multiplier: 1,
       order_price: total_price,
       order_price_eur: total_price,
       order: current_order
     };
+    _this.handleChangeValue = _this.handleChangeValue.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -70549,6 +70553,16 @@ var Order = /*#__PURE__*/function (_React$Component) {
           });
         });
       });
+      $('#paymentForm').append(csrf_field);
+    }
+  }, {
+    key: "handleChangeValue",
+    value: function handleChangeValue(event) {
+      var id = event.target.id;
+      var value = event.target.value;
+      var newState = {};
+      newState[id] = value;
+      this.setState(newState);
     }
   }, {
     key: "render",
@@ -70584,8 +70598,64 @@ var Order = /*#__PURE__*/function (_React$Component) {
         }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, item.name, ":"), " ", item.amount, " pcs.");
       }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
         className: "mt-3"
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Total price:\xA0", priceInUsd, ",\xA0", priceInEur)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
-        type: "button",
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, "Total price:\xA0", priceInUsd, ",\xA0", priceInEur)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        id: "paymentForm",
+        method: "POST",
+        action: "/payment"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "phone",
+        className: "col-md-4 col-form-label text-md-right"
+      }, "Phone"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        id: "phone",
+        type: "tel",
+        className: "form-control",
+        name: "phone",
+        value: this.state.phone,
+        onChange: this.handleChangeValue,
+        required: true,
+        autoFocus: true
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "address",
+        className: "col-md-4 col-form-label text-md-right"
+      }, "Address"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+        id: "address",
+        type: "text",
+        rows: "3",
+        className: "form-control",
+        name: "address",
+        value: this.state.address,
+        onChange: this.handleChangeValue,
+        required: true
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        htmlFor: "post_code",
+        className: "col-md-4 col-form-label text-md-right"
+      }, "Zip/Postal code"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-6"
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        id: "post_code",
+        type: "text",
+        className: "form-control",
+        name: "post_code",
+        value: this.state.post_code,
+        onChange: this.handleChangeValue,
+        required: true
+      }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "hidden",
+        id: "order_id",
+        name: "order_id",
+        value: order_id
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "submit",
         className: "btn btn-success mt-3"
       }, "Proceed to payment"))))))));
     }
