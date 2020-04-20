@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Traits\RegisterUser;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash as Hash;
 
 class OrderController extends Controller
 {
@@ -19,12 +18,14 @@ class OrderController extends Controller
 
             $lastOrder = \App\Order::where('user_id', $userId)->latest('created_at')->first();
 
+            $orderId = $lastOrder->id;
             $orderContents = $lastOrder->order_contents;
             $totalPrice = $lastOrder->total_price;
 
             return view('order', [
                 'current_order' => json_decode($orderContents),
-                'total_price' => $totalPrice
+                'total_price' => $totalPrice,
+                'order_id' => $orderId
             ]);
         } else {
             return redirect()->route('home');
@@ -62,11 +63,30 @@ class OrderController extends Controller
 
         $order = new \App\Order([
             'order_contents' => $orderContents,
-            'total_price' => $totalPrice
+            'total_price' => $totalPrice,
+            'phone' => $phone
         ]);
 
         $user->orders()->save($order);
 
         return $res;
+    }
+
+    public function payment(Request $request)
+    {
+        $phone = $request->phone;
+        $address = $request->address;
+        $postCode = $request->post_code;
+        $orderId = $request->order_id;
+
+        $order = \App\Order::find($orderId);
+
+        $order->phone = $phone;
+        $order->address = $address;
+        $order->post_code = $postCode;
+
+        $order->save();
+
+        return view('success');
     }
 }
